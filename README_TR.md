@@ -55,3 +55,24 @@ model.classifier = nn.Sequential(
 )
 model.load_state_dict(torch.load("best_model.pt"))
 model.eval()
+
+#Görsel Tahmin
+from PIL import Image
+from torchvision import transforms
+
+img = Image.open("gorsel.jpg").convert("RGB")
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406],
+                         [0.229, 0.224, 0.225])
+])
+input_tensor = transform(img).unsqueeze(0)
+with torch.no_grad():
+    output = model(input_tensor)
+    _, predicted = torch.max(output, 1)
+
+print(predicted.item())  # 0: kuş, 1: drone
+
+
+
